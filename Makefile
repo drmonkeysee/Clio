@@ -3,7 +3,7 @@ VENV := venv
 ACTIVATE := source $(VENV)/bin/activate
 PYPATH := PYTHONPATH=src
 
-.PHONY: int purge run
+.PHONY: clean int purge run
 
 int: $(VENV)
 	$(ACTIVATE) && $(PYPATH) $(PY)
@@ -11,7 +11,10 @@ int: $(VENV)
 run: $(VENV)
 	$(ACTIVATE) && $(PYPATH) $(PY) -m clio
 
-purge:
+clean:
+	find src -type d -name __pycache__ -exec $(RM) -rv {} +
+
+purge: clean
 	$(RM) -r $(VENV)
 
 $(VENV):
