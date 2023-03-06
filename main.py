@@ -1,5 +1,8 @@
+import src.clio.app
+
+
 def main():
-    print('Hello World!')
+    src.clio.app.run()
 
 
 if __name__ == '__main__':
