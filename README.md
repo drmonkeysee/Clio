@@ -5,3 +5,16 @@ A civilization simulator, focused on procedurally-generated economics and histor
 This project is built and managed using the [Astral](https://astral.sh) tool suite.
 
 *[Clio](https://en.wikipedia.org/wiki/Clio) (Κλειώ)*: the muse of history
+
+## Build
+
+1. Install [uv](https://docs.astral.sh/uv/getting-started/installation/)
+2. `uv sync` to install dependencies
+
+## Run
+
+The Makefile provides the following targets:
+
+- `make run`: run the app
+- `make format`: format source files
+- `make type`: run the type checker
