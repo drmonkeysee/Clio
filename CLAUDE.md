@@ -18,6 +18,8 @@ Clio is a pygame-ce civilization simulator focused on procedurally-generated eco
 
 The entry point is `clio/__main__.py`, which calls `clio.app.run()`. The project is in early development — the `clio/` package currently contains only the stub `app.run()` function.
 
+pygame-ce documentation can be found here @https://pyga.me/docs/
+
 ## Code Style
 
 - use modern Python constructs like type-hints, match statements, and the walrus operator `:=`, we're using 3.14+
