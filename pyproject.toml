@@ -4,4 +4,12 @@ version = "0.0.1"
 description = "A civilization simulator"
 readme = "README.md"
 requires-python = ">=3.14"
+license = "MIT"
+license-files = ["LICENSE.md"]
+authors = [
+    {name = "Brandon Stansbury", email = "brandonrstansbury@gmail.com"},
+]
 dependencies = []
+
+[project.urls]
+Repository = "https://github.com/drmonkeysee/Clio"
