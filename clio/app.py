@@ -1,5 +1,7 @@
 import pygame
 
+from clio import codepage
+
 WINDOW_SIZE: tuple[int, int] = (640, 400)
 TITLE: str = "Clio"
 MESSAGE: str = "Hello from clio!"
@@ -22,13 +24,13 @@ def _load_font(scale):
 
 
 def _panel_rows(show_cursor):
-    cursor = "█" if show_cursor else " "
+    cursor = codepage.FULL_BLOCK if show_cursor else " "
     msg = f"{MESSAGE}{cursor}"
     inner = len(msg) + _H_PAD * 2
-    top = "╔" + "═" * inner + "╗"
-    empty = "║" + " " * inner + "║"
-    middle = "║" + " " * _H_PAD + msg + " " * _H_PAD + "║"
-    bottom = "╚" + "═" * inner + "╝"
+    top = f"{codepage.BOX_DBL_DOWN_RIGHT}{codepage.BOX_DBL_HORIZONTAL * inner}{codepage.BOX_DBL_DOWN_LEFT}"
+    empty = f"{codepage.BOX_DBL_VERTICAL}{'':{inner}}{codepage.BOX_DBL_VERTICAL}"
+    middle = f"{codepage.BOX_DBL_VERTICAL}{'':{_H_PAD}}{msg}{'':{_H_PAD}}{codepage.BOX_DBL_VERTICAL}"
+    bottom = f"{codepage.BOX_DBL_UP_RIGHT}{codepage.BOX_DBL_HORIZONTAL * inner}{codepage.BOX_DBL_UP_LEFT}"
     return [top] + [empty] * _V_PAD + [middle] + [empty] * _V_PAD + [bottom]
 
 
