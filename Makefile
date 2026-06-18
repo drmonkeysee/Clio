@@ -1,4 +1,6 @@
-.PHONY: format run type
+.PHONY: check format run type
+
+check: format type
 
 format:
 	uv format
