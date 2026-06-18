@@ -9,7 +9,9 @@ license-files = ["LICENSE.md"]
 authors = [
     {name = "Brandon Stansbury", email = "brandonrstansbury@gmail.com"},
 ]
-dependencies = []
+dependencies = [
+    "pygame-ce>=2.5.7",
+]
 
 [project.urls]
 Repository = "https://github.com/drmonkeysee/Clio"

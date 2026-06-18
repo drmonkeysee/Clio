@@ -22,3 +22,8 @@ The entry point is `clio/__main__.py`, which calls `clio.app.run()`. The project
 
 - use modern Python constructs like type-hints, match statements, and the walrus operator `:=`, we're using 3.14+
 - all module-public symbols should have type-hints, module- and class-private symbols do not need type-hints
+
+## Environment
+
+- `uv` is the build-tool for this project, all Python commands should go through `uv`
+- do not install any dependencies yourself, only recommend any dependencies when the need arises
