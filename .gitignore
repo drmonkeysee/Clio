@@ -302,3 +302,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Project
+design.md
