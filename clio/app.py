@@ -13,10 +13,12 @@ _H_PAD = 3
 _V_PAD = 1
 
 
-def _load_font():
+def _load_font(scale):
     # Comma-separated list gives pygame a fallback chain; Menlo ships on macOS,
     # Consolas on Windows, DejaVu Sans Mono on Linux.
-    return pygame.font.SysFont("menlo,consolas,dejavusansmono,monospace", FONT_SIZE)
+    return pygame.font.SysFont(
+        "menlo,consolas,dejavusansmono,monospace", max(1, round(FONT_SIZE * scale))
+    )
 
 
 def _panel_rows(show_cursor):
@@ -43,14 +45,18 @@ def _build_panel(font, show_cursor):
 
 def run() -> None:
     pygame.init()
-    pygame.display.set_caption(TITLE)
-    screen = pygame.display.set_mode(WINDOW_SIZE)
-    font = _load_font()
+    win = pygame.Window(TITLE, WINDOW_SIZE, allow_high_dpi=True)
+    screen = win.get_surface()
+
+    # On HiDPI displays (e.g. Retina), the surface is larger than WINDOW_SIZE.
+    # Scale the font up to match so text renders at physical pixel density.
+    scale = screen.get_height() / WINDOW_SIZE[1]
+    font = _load_font(scale)
     clock = pygame.time.Clock()
 
     # Pre-build both cursor states so the loop never allocates during rendering.
     panels = {True: _build_panel(font, True), False: _build_panel(font, False)}
-    center = (WINDOW_SIZE[0] // 2, WINDOW_SIZE[1] // 2)
+    center = (screen.get_width() // 2, screen.get_height() // 2)
 
     cursor_on = True
     last_blink = pygame.time.get_ticks()
@@ -71,7 +77,8 @@ def run() -> None:
         screen.fill(BACKGROUND)
         panel = panels[cursor_on]
         screen.blit(panel, panel.get_rect(center=center))
-        pygame.display.flip()
+        win.flip()
         clock.tick(FPS)
 
+    win.destroy()
     pygame.quit()
