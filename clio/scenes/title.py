@@ -6,6 +6,7 @@ Presents a keyboard-navigable menu: arrow keys select, Enter confirms, Esc quits
 
 from __future__ import annotations
 
+from enum import IntEnum
 from typing import final
 
 import pygame
@@ -23,6 +24,13 @@ _CURSOR: tuple[int, int, int] = (200, 140, 0)
 
 _TITLE = "C L I O"
 _SUBTITLE = "Trade Network Emergence Simulator"
+
+
+class _MenuItem(IntEnum):
+    GENERATE_SIMPLEX = 0
+    GENERATE_RANDOM = 1
+    QUIT = 2
+
 
 _MENU_ITEMS = ("Generate Simplex Map", "Generate Random Map", "Quit")
 
@@ -62,19 +70,19 @@ class TitleScene(Scene):
                 self._activate()
 
     def _activate(self) -> None:
-        match self._selected:
-            case 0 | 1:  # Generate Simplex Map / Generate Random Map
-                wgen = (
-                    world.generate_simplex
-                    if self._selected == 0
-                    else world.generate_random
-                )
-                wmap = wgen(self._map_rows, self._map_cols)
-                self.next_scene = WorldMapScene(
-                    wmap, self._tile_font, self._tile, title=self
-                )
-            case 2:  # Quit
+        wgen = None
+        match _MenuItem(self._selected):
+            case _MenuItem.GENERATE_SIMPLEX:
+                wgen = world.generate_simplex
+            case _MenuItem.GENERATE_RANDOM:
+                wgen = world.generate_random
+            case _MenuItem.QUIT:
                 self.quit = True
+        if wgen:
+            wmap = wgen(self._map_rows, self._map_cols)
+            self.next_scene = WorldMapScene(
+                wmap, self._tile_font, self._tile, title=self
+            )
 
     def draw(self, screen: pygame.Surface) -> None:
         if self._surface is None or self._surface.get_size() != screen.get_size():
