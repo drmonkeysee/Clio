@@ -30,7 +30,7 @@ class WorldMapScene(Scene):
                 if self._title is not None:
                     self.next_scene = self._title
                 else:
-                    self.request_quit()
+                    self.quit = True
 
     def draw(self, screen: pygame.Surface) -> None:
         w, h = screen.get_size()

@@ -45,7 +45,7 @@ class TitleScene(Scene):
             return
         match event.key:
             case pygame.K_ESCAPE:
-                self.request_quit()
+                self.quit = True
             case pygame.K_UP | pygame.K_k:
                 self._selected = (self._selected - 1) % len(_MENU_ITEMS)
                 self._surface = None  # invalidate cached render
@@ -66,7 +66,7 @@ class TitleScene(Scene):
                     world, self._tile_font, self._tile, title=self
                 )
             case 1:  # Quit
-                self.request_quit()
+                self.quit = True
 
     def draw(self, screen: pygame.Surface) -> None:
         if self._surface is None or self._surface.get_size() != screen.get_size():

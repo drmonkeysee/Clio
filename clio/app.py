@@ -57,12 +57,10 @@ def run() -> None:
         win.flip()
 
         # Check for scene transition after drawing this frame.
-        if current.next_scene is not None:
-            if scene_mod.is_quit(current.next_scene):
-                running = False
-            elif isinstance(current.next_scene, scene_mod.Scene):
-                current = current.next_scene
-                current.next_scene = None  # reset so the scene starts clean
+        if current.quit:
+            running = False
+        elif nxt := current.get_transition():
+            current = nxt
 
     win.destroy()
     pygame.quit()
