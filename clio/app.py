@@ -1,86 +1,65 @@
 import pygame
 
-from clio import codepage
+from clio import scene as scene_mod
+from clio.render import TILE_LOGICAL
+from clio.scenes.title import TitleScene
 
-WINDOW_SIZE: tuple[int, int] = (640, 400)
-TITLE: str = "Clio"
-MESSAGE: str = "Hello from clio!"
-BACKGROUND: tuple[int, int, int] = (10, 10, 10)
-AMBER: tuple[int, int, int] = (255, 176, 0)
-FONT_SIZE: int = 24
-FPS: int = 30
+_TITLE: str = "Clio"
+_UI_FONT_SIZE: int = 24
+_FPS: int = 60
 
-_CURSOR_BLINK_MS = 530
-_H_PAD = 3
-_V_PAD = 1
+# Window logical size: exactly 64 tiles × TILE_LOGICAL px.
+# HiDPI surfaces are larger; scale is computed from the ratio at runtime.
+_MAP_TILES: int = 64
+_LOGICAL_SIZE: tuple[int, int] = (_MAP_TILES * TILE_LOGICAL, _MAP_TILES * TILE_LOGICAL)
 
 
-def _load_font(scale):
+def _make_font(size: int) -> pygame.font.Font:
     # Comma-separated list gives pygame a fallback chain; Menlo ships on macOS,
     # Consolas on Windows, DejaVu Sans Mono on Linux.
-    return pygame.font.SysFont(
-        "menlo,consolas,dejavusansmono,monospace", max(1, round(FONT_SIZE * scale))
-    )
-
-
-def _panel_rows(show_cursor):
-    cursor = codepage.FULL_BLOCK if show_cursor else " "
-    msg = f"{MESSAGE}{cursor}"
-    inner = len(msg) + _H_PAD * 2
-    top = f"{codepage.BOX_DBL_DOWN_RIGHT}{codepage.BOX_DBL_HORIZONTAL * inner}{codepage.BOX_DBL_DOWN_LEFT}"
-    empty = f"{codepage.BOX_DBL_VERTICAL}{'':{inner}}{codepage.BOX_DBL_VERTICAL}"
-    middle = f"{codepage.BOX_DBL_VERTICAL}{'':{_H_PAD}}{msg}{'':{_H_PAD}}{codepage.BOX_DBL_VERTICAL}"
-    bottom = f"{codepage.BOX_DBL_UP_RIGHT}{codepage.BOX_DBL_HORIZONTAL * inner}{codepage.BOX_DBL_UP_LEFT}"
-    return [top] + [empty] * _V_PAD + [middle] + [empty] * _V_PAD + [bottom]
-
-
-def _build_panel(font, show_cursor):
-    rows = _panel_rows(show_cursor)
-    _, char_h = font.size("M")
-    # Measure panel width from the rendered top row (handles glyph metrics correctly).
-    sample = font.render(rows[0], True, AMBER)
-    surf = pygame.Surface((sample.get_width(), char_h * len(rows)), pygame.SRCALPHA)
-    for i, row in enumerate(rows):
-        surf.blit(font.render(row, True, AMBER), (0, i * char_h))
-    return surf
+    return pygame.font.SysFont("menlo,consolas,dejavusansmono,monospace", max(1, size))
 
 
 def run() -> None:
     pygame.init()
-    win = pygame.Window(TITLE, WINDOW_SIZE, allow_high_dpi=True)
+    win = pygame.Window(_TITLE, _LOGICAL_SIZE, allow_high_dpi=True)
     screen = win.get_surface()
 
-    # On HiDPI displays (e.g. Retina), the surface is larger than WINDOW_SIZE.
-    # Scale the font up to match so text renders at physical pixel density.
-    scale = screen.get_height() / WINDOW_SIZE[1]
-    font = _load_font(scale)
+    # On HiDPI displays (e.g. Retina) the surface is larger than _LOGICAL_SIZE.
+    # Scale all pixel sizes to match physical pixel density.
+    scale = screen.get_height() / _LOGICAL_SIZE[1]
+    tile = max(1, round(TILE_LOGICAL * scale))
+
+    ui_font = _make_font(round(_UI_FONT_SIZE * scale))
+    tile_font = _make_font(tile)
+
     clock = pygame.time.Clock()
-
-    # Pre-build both cursor states so the loop never allocates during rendering.
-    panels = {True: _build_panel(font, True), False: _build_panel(font, False)}
-    center = (screen.get_width() // 2, screen.get_height() // 2)
-
-    cursor_on = True
-    last_blink = pygame.time.get_ticks()
+    current: scene_mod.Scene = TitleScene(ui_font, tile_font, tile)
 
     running = True
     while running:
+        dt = clock.tick(_FPS)
+
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            elif event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
-                running = False
+                break
+            current.handle_event(event)
 
-        now = pygame.time.get_ticks()
-        if now - last_blink >= _CURSOR_BLINK_MS:
-            cursor_on = not cursor_on
-            last_blink = now
+        if not running:
+            break
 
-        screen.fill(BACKGROUND)
-        panel = panels[cursor_on]
-        screen.blit(panel, panel.get_rect(center=center))
+        current.update(dt)
+        current.draw(screen)
         win.flip()
-        clock.tick(FPS)
+
+        # Check for scene transition after drawing this frame.
+        if current.next_scene is not None:
+            if scene_mod.is_quit(current.next_scene):
+                running = False
+            elif isinstance(current.next_scene, scene_mod.Scene):
+                current = current.next_scene
+                current.next_scene = None  # reset so the scene starts clean
 
     win.destroy()
     pygame.quit()

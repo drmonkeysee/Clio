@@ -35,3 +35,16 @@ BOX_DBL_DOWN_RIGHT: str = CP437[0xC9]  # ╔
 BOX_DBL_DOWN_LEFT: str = CP437[0xBB]  # ╗
 BOX_DBL_UP_RIGHT: str = CP437[0xC8]  # ╚
 BOX_DBL_UP_LEFT: str = CP437[0xBC]  # ╝
+
+# Menu / UI glyphs
+TRIANGLE_RIGHT: str = CP437[0x10]  # ► (selection cursor)
+
+# Terrain glyphs
+WAVE: str = CP437[0xF7]  # ≈ (deep ocean)
+TILDE: str = CP437[0x7E]  # ~ (coast / river)
+DOT: str = CP437[0x2E]  # . (plain)
+CLUB: str = CP437[0x05]  # ♣ (forest)
+LOWER_N: str = CP437[0x6E]  # n (hill)
+CARET: str = CP437[0x5E]  # ^ (mountain)
+MIDDLE_DOT: str = CP437[0xFA]  # · (desert)
+UNDERSCORE: str = CP437[0x5F]  # _ (tundra)
