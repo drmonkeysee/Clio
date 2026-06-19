@@ -18,3 +18,5 @@ The Makefile provides the following targets:
 - `make run`: run the app
 - `make format`: format source files
 - `make type`: run the type checker
+- `make test`: run the unit tests
+- `make check`: format, type-check, and test (runs all of the above)
