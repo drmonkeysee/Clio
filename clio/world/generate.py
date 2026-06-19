@@ -27,8 +27,8 @@ assert abs(sum(_WEIGHTS) - 1.0) < 1e-9, "weights must sum to 1"
 
 
 def generate_random(
-    rows: int = 64,
-    cols: int = 64,
+    rows: int,
+    cols: int,
     seed: int | None = None,
 ) -> WorldMap:
     """Return a fully random (spatially unstructured) 64×64 world map.

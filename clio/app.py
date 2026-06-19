@@ -8,10 +8,11 @@ _TITLE: str = "Clio"
 _UI_FONT_SIZE: int = 24
 _FPS: int = 60
 
-# Window logical size: exactly 64 tiles × TILE_LOGICAL px.
+# Window logical size derived from map dimensions × tile size.
 # HiDPI surfaces are larger; scale is computed from the ratio at runtime.
-_MAP_TILES: int = 64
-_LOGICAL_SIZE: tuple[int, int] = (_MAP_TILES * TILE_LOGICAL, _MAP_TILES * TILE_LOGICAL)
+_MAP_COLS: int = 64
+_MAP_ROWS: int = 56
+_LOGICAL_SIZE: tuple[int, int] = (_MAP_COLS * TILE_LOGICAL, _MAP_ROWS * TILE_LOGICAL)
 
 
 def _make_font(size: int) -> pygame.font.Font:
@@ -34,7 +35,9 @@ def run() -> None:
     tile_font = _make_font(tile)
 
     clock = pygame.time.Clock()
-    current: scene_mod.Scene = TitleScene(ui_font, tile_font, tile)
+    current: scene_mod.Scene = TitleScene(
+        ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS
+    )
 
     running = True
     while running:

@@ -28,11 +28,15 @@ class TitleScene(Scene):
         ui_font: pygame.font.Font,
         tile_font: pygame.font.Font,
         tile: int,
+        map_cols: int,
+        map_rows: int,
     ) -> None:
         super().__init__()
         self._ui_font = ui_font
         self._tile_font = tile_font
         self._tile = tile
+        self._map_cols = map_cols
+        self._map_rows = map_rows
         self._selected = 0
         self._surface: pygame.Surface | None = None
 
@@ -57,7 +61,7 @@ class TitleScene(Scene):
                 from clio.scenes.world_map import WorldMapScene
                 from clio.world.generate import generate_random
 
-                world = generate_random()
+                world = generate_random(self._map_rows, self._map_cols)
                 self.next_scene = WorldMapScene(
                     world, self._tile_font, self._tile, title=self
                 )
