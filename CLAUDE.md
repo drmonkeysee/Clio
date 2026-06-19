@@ -20,6 +20,8 @@ The entry point is `clio/__main__.py`, which calls `clio.app.run()`. The project
 
 pygame-ce documentation can be found here @https://pyga.me/docs/
 
+- when chosing a glyph to represent an entity stick with the available glyphs in @clio/codepage.py
+
 ## Code Style
 
 - use modern Python constructs like type-hints, match statements, and the walrus operator `:=`, we're using 3.14+
