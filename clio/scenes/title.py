@@ -10,8 +10,11 @@ from typing import final
 
 import pygame
 
+import clio.world as world
 from clio import codepage
 from clio.scene import Scene
+from clio.scenes.world_map import WorldMapScene
+
 
 _BACKGROUND: tuple[int, int, int] = (10, 10, 10)
 _AMBER: tuple[int, int, int] = (255, 176, 0)
@@ -61,13 +64,14 @@ class TitleScene(Scene):
     def _activate(self) -> None:
         match self._selected:
             case 0 | 1:  # Generate Simplex Map / Generate Random Map
-                from clio.scenes.world_map import WorldMapScene
-                from clio.world.generate import generate, generate_random
-
-                fn = generate if self._selected == 0 else generate_random
-                world = fn(self._map_rows, self._map_cols)
+                wgen = (
+                    world.generate_simplex
+                    if self._selected == 0
+                    else world.generate_random
+                )
+                wmap = wgen(self._map_rows, self._map_cols)
                 self.next_scene = WorldMapScene(
-                    world, self._tile_font, self._tile, title=self
+                    wmap, self._tile_font, self._tile, title=self
                 )
             case 2:  # Quit
                 self.quit = True
