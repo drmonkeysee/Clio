@@ -24,7 +24,7 @@ assert len(_TERRAIN_VALUES) == len(_WEIGHTS), "terrain/weight mismatch"
 assert abs(sum(_WEIGHTS) - 1.0) < 1e-9, "weights must sum to 1"
 
 
-def generate(
+def generate_random(
     rows: int,
     cols: int,
     seed: int | None = None,

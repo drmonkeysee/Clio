@@ -1,2 +1,2 @@
-from clio.world.generate_random import generate as generate_random
-from clio.world.generate_simplex import generate as generate_simplex
+from clio.world.random import generate_random as generate_random
+from clio.world.simplex import generate_simplex as generate_simplex

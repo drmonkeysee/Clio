@@ -98,7 +98,7 @@ def _border_fade(rows: int, cols: int) -> np.ndarray:
     return np.clip(fade, 0.0, 1.0).astype(np.float32)
 
 
-def generate(
+def generate_simplex(
     rows: int,
     cols: int,
     seed: int | None = None,
