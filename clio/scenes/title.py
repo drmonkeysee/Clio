@@ -59,9 +59,9 @@ class TitleScene(Scene):
         match self._selected:
             case 0:  # Generate New Map
                 from clio.scenes.world_map import WorldMapScene
-                from clio.world.generate import generate_random
+                from clio.world.generate import generate
 
-                world = generate_random(self._map_rows, self._map_cols)
+                world = generate(self._map_rows, self._map_cols)
                 self.next_scene = WorldMapScene(
                     world, self._tile_font, self._tile, title=self
                 )

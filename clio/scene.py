@@ -22,7 +22,7 @@ class Scene:
     def get_transition(self) -> Scene | None:
         """Get the next scene transition, or None to stay on this scene."""
         if nxt := self.next_scene:
-            nxt.next_scene = None   # reset so the scene starts clean
+            nxt.next_scene = None  # reset so the scene starts clean
         return nxt
 
     def handle_event(self, event: pygame.event.Event) -> None:
