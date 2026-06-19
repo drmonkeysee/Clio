@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 The high-level project description can be found in @README.md.
 
-The initial design document is in @design.md (not checked into git).
+The initial design document is in @docs/clio-initial-design.md.
 
 ## Commands
 
