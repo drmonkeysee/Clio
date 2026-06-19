@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import final
+
 import pygame
 
 from clio.render import GlyphAtlas, render_world_map
@@ -9,6 +11,7 @@ from clio.scene import Scene
 from clio.world.grid import WorldMap
 
 
+@final
 class WorldMapScene(Scene):
     def __init__(
         self,

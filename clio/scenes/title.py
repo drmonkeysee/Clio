@@ -6,6 +6,8 @@ Presents a keyboard-navigable menu: arrow keys select, Enter confirms, Esc quits
 
 from __future__ import annotations
 
+from typing import final
+
 import pygame
 
 from clio import codepage
@@ -19,9 +21,10 @@ _CURSOR: tuple[int, int, int] = (200, 140, 0)
 _TITLE = "C L I O"
 _SUBTITLE = "Trade Network Emergence Simulator"
 
-_MENU_ITEMS = ("Generate New Map", "Quit")
+_MENU_ITEMS = ("Generate Simplex Map", "Generate Random Map", "Quit")
 
 
+@final
 class TitleScene(Scene):
     def __init__(
         self,
@@ -57,15 +60,16 @@ class TitleScene(Scene):
 
     def _activate(self) -> None:
         match self._selected:
-            case 0:  # Generate New Map
+            case 0 | 1:  # Generate Simplex Map / Generate Random Map
                 from clio.scenes.world_map import WorldMapScene
-                from clio.world.generate import generate
+                from clio.world.generate import generate, generate_random
 
-                world = generate(self._map_rows, self._map_cols)
+                fn = generate if self._selected == 0 else generate_random
+                world = fn(self._map_rows, self._map_cols)
                 self.next_scene = WorldMapScene(
                     world, self._tile_font, self._tile, title=self
                 )
-            case 1:  # Quit
+            case 2:  # Quit
                 self.quit = True
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -90,7 +94,7 @@ class TitleScene(Scene):
                 lines.append((f"  {item}", _DIM))
 
         lines.append(("", _DIM))
-        lines.append(("↑↓ / j k  move   Enter  select   Esc  quit", _DIM))
+        lines.append(("↑↓ / j k: move   Enter: select   Esc: quit", _DIM))
 
         surf = pygame.Surface(size)
         surf.fill(_BACKGROUND)
