@@ -1,6 +1,6 @@
 import pygame
 
-from clio import scene as scene_mod
+from clio import palette, scene as scene_mod
 from clio.render import TILE_LOGICAL
 from clio.scenes.title import TitleScene
 
@@ -39,7 +39,7 @@ def run() -> None:
 
     clock = pygame.time.Clock()
     current: scene_mod.Scene = TitleScene(
-        ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS
+        palette.THEMES[0], ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS
     )
 
     running = True

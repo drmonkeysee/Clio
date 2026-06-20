@@ -7,7 +7,8 @@ Usage::
 
     from clio import palette
 
-    theme = palette.active()
+    theme = palette.THEMES[0]           # or any Theme value
+    theme = palette.next_theme(theme)   # advance to the next; TEMPORARY
     surf.fill(theme.background)
     font.render(text, True, theme.text)
 """
@@ -50,9 +51,9 @@ TUNDRA_BG: Color = (55, 60, 65)         # cold ground
 # Each Theme bundles the five UI chrome colors. Terrain colors above are
 # shared by all themes and not included here.
 #
-# Toggle on the title screen with the `t` key.
-# Once a theme is chosen, delete the unused Theme, the active()/cycle()
-# helpers, the _THEME_INDEX module global, and the K_t handler in title.py.
+# Toggle on the title screen with the `t` key (calls Scene.cycle_theme()).
+# Once a theme is chosen, delete the unused Theme, THEMES, next_theme(),
+# Scene.cycle_theme(), and the K_t handler in title.py.
 # ---------------------------------------------------------------------------
 
 
@@ -101,20 +102,10 @@ BROGUE_SLATE: Theme = Theme(
     accent=(190, 205, 220),
 )
 
-# Ordered tuple of all themes — drives the cycle() toggle.  # TEMPORARY
+# Ordered tuple of all themes — drives next_theme().  # TEMPORARY
 THEMES: tuple[Theme, ...] = (BONE_STONE, PARCHMENT, BROGUE_SLATE)
 
-# Module-level index into THEMES.  # TEMPORARY
-_THEME_INDEX: int = 0
 
-
-def active() -> Theme:  # TEMPORARY
-    """Return the currently active UI theme."""
-    return THEMES[_THEME_INDEX]
-
-
-def cycle() -> Theme:  # TEMPORARY
-    """Advance to the next theme in THEMES and return it."""
-    global _THEME_INDEX
-    _THEME_INDEX = (_THEME_INDEX + 1) % len(THEMES)
-    return THEMES[_THEME_INDEX]
+def next_theme(current: Theme) -> Theme:  # TEMPORARY (see block comment above)
+    """Return the next theme after `current` in THEMES, wrapping around."""
+    return THEMES[(THEMES.index(current) + 1) % len(THEMES)]

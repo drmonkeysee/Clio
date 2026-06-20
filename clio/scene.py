@@ -7,22 +7,34 @@ the scene transition after every frame:
   - None          → stay in the current scene
   - another Scene → switch to that scene next frame
   - quit flag     → exit the app
+
+Each scene carries the active UI theme. On transition the outgoing scene
+hands its theme to the incoming scene (see get_transition), so the chosen
+theme follows the session rather than living in global state.
 """
 
 from __future__ import annotations
 
 import pygame
 
+from clio import palette
+
 
 class Scene:
-    def __init__(self) -> None:
+    def __init__(self, theme: palette.Theme) -> None:
+        self.theme = theme
         self.next_scene: Scene | None = None
         self.quit: bool = False
+
+    def cycle_theme(self) -> None:  # TEMPORARY (see palette.py)
+        """Advance this scene's theme to the next in palette.THEMES."""
+        self.theme = palette.next_theme(self.theme)
 
     def get_transition(self) -> Scene | None:
         """Get the next scene transition, or None to stay on this scene."""
         if nxt := self.next_scene:
             nxt.next_scene = None  # reset so the scene starts clean
+            nxt.theme = self.theme  # hand the current theme to the incoming scene
         return nxt
 
     def handle_event(self, event: pygame.event.Event) -> None:

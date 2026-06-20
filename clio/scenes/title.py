@@ -12,7 +12,8 @@ from typing import final
 import pygame
 
 import clio.world as world
-from clio import codepage, palette
+from clio import codepage
+from clio.palette import Theme
 from clio.render import render_border
 from clio.scene import Scene
 from clio.scenes.world_map import WorldMapScene
@@ -34,13 +35,14 @@ _MENU_ITEMS = ("Generate Simplex Map", "Generate Random Map", "Quit")
 class TitleScene(Scene):
     def __init__(
         self,
+        theme: Theme,
         ui_font: pygame.font.Font,
         tile_font: pygame.font.Font,
         tile: int,
         map_cols: int,
         map_rows: int,
     ) -> None:
-        super().__init__()
+        super().__init__(theme)
         self._ui_font = ui_font
         self._tile_font = tile_font
         self._tile = tile
@@ -62,7 +64,7 @@ class TitleScene(Scene):
                 self._selected = (self._selected + 1) % len(_MENU_ITEMS)
                 self._surface = None
             case pygame.K_t:  # TEMPORARY — theme toggle
-                palette.cycle()
+                self.cycle_theme()
                 self._surface = None
             case pygame.K_RETURN | pygame.K_KP_ENTER:
                 self._activate()
@@ -79,7 +81,7 @@ class TitleScene(Scene):
         if wgen:
             wmap = wgen(self._map_rows, self._map_cols)
             self.next_scene = WorldMapScene(
-                wmap, self._tile_font, self._tile, title=self
+                self.theme, wmap, self._tile_font, self._tile, title=self
             )
 
     def draw(self, screen: pygame.Surface) -> None:
@@ -89,7 +91,7 @@ class TitleScene(Scene):
 
     def _render(self, size: tuple[int, int]) -> pygame.Surface:
         font = self._ui_font
-        theme = palette.active()
+        theme = self.theme
         _, char_h = font.size("M")
         selector = codepage.TRIANGLE_RIGHT
 
