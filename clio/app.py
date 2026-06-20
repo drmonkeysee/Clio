@@ -12,7 +12,10 @@ _FPS: int = 60
 # HiDPI surfaces are larger; scale is computed from the ratio at runtime.
 _MAP_COLS: int = 64
 _MAP_ROWS: int = 56
-_LOGICAL_SIZE: tuple[int, int] = (_MAP_COLS * TILE_LOGICAL, _MAP_ROWS * TILE_LOGICAL)
+_LOGICAL_SIZE: tuple[int, int] = (
+    (_MAP_COLS + 2) * TILE_LOGICAL,
+    (_MAP_ROWS + 2) * TILE_LOGICAL,
+)
 
 
 def _make_font(size: int) -> pygame.font.Font:

@@ -13,6 +13,7 @@ import pygame
 
 import clio.world as world
 from clio import codepage
+from clio.render import render_border
 from clio.scene import Scene
 from clio.scenes.world_map import WorldMapScene
 
@@ -118,5 +119,9 @@ class TitleScene(Scene):
             rendered = font.render(text, True, color)
             x = (size[0] - rendered.get_width()) // 2
             surf.blit(rendered, (x, y_start + i * char_h))
+
+        surf.blit(
+            render_border(self._map_cols, self._map_rows, self._tile, _AMBER), (0, 0)
+        )
 
         return surf

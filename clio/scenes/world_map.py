@@ -6,9 +6,11 @@ from typing import final
 
 import pygame
 
-from clio.render import GlyphAtlas, render_world_map
+from clio.render import GlyphAtlas, render_border, render_world_map
 from clio.scene import Scene
 from clio.world.grid import WorldMap
+
+_AMBER: tuple[int, int, int] = (255, 176, 0)
 
 
 @final
@@ -24,6 +26,7 @@ class WorldMapScene(Scene):
         self._title = title
         atlas = GlyphAtlas(tile_font, tile)
         self._map_surf = render_world_map(world, atlas)
+        self._border = render_border(world.cols, world.rows, tile, _AMBER)
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
@@ -40,3 +43,4 @@ class WorldMapScene(Scene):
         mw, mh = self._map_surf.get_size()
         screen.fill((0, 0, 0))
         screen.blit(self._map_surf, ((w - mw) // 2, (h - mh) // 2))
+        screen.blit(self._border, (0, 0))
