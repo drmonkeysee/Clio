@@ -1,7 +1,7 @@
 """Title screen scene.
 
-Reuses the amber-on-black DF aesthetic from the original app.py hello world.
-Presents a keyboard-navigable menu: arrow keys select, Enter confirms, Esc quits.
+Keyboard-navigable menu: arrow keys / j k select, Enter confirms, Esc quits.
+Press t to cycle UI themes (temporary — remove once a palette is chosen).
 """
 
 from __future__ import annotations
@@ -12,16 +12,10 @@ from typing import final
 import pygame
 
 import clio.world as world
-from clio import codepage
+from clio import codepage, palette
 from clio.render import render_border
 from clio.scene import Scene
 from clio.scenes.world_map import WorldMapScene
-
-
-_BACKGROUND: tuple[int, int, int] = (10, 10, 10)
-_AMBER: tuple[int, int, int] = (255, 176, 0)
-_DIM: tuple[int, int, int] = (130, 85, 0)
-_CURSOR: tuple[int, int, int] = (200, 140, 0)
 
 _TITLE = "C L I O"
 _SUBTITLE = "Trade Network Emergence Simulator"
@@ -67,6 +61,9 @@ class TitleScene(Scene):
             case pygame.K_DOWN | pygame.K_j:
                 self._selected = (self._selected + 1) % len(_MENU_ITEMS)
                 self._surface = None
+            case pygame.K_t:  # TEMPORARY — theme toggle
+                palette.cycle()
+                self._surface = None
             case pygame.K_RETURN | pygame.K_KP_ENTER:
                 self._activate()
 
@@ -92,25 +89,29 @@ class TitleScene(Scene):
 
     def _render(self, size: tuple[int, int]) -> pygame.Surface:
         font = self._ui_font
+        theme = palette.active()
         _, char_h = font.size("M")
         selector = codepage.TRIANGLE_RIGHT
 
         lines: list[tuple[str, tuple[int, int, int]]] = [
-            (_TITLE, _AMBER),
-            (_SUBTITLE, _DIM),
-            ("", _AMBER),
+            (_TITLE, theme.text),
+            (_SUBTITLE, theme.dim),
+            ("", theme.dim),
         ]
         for i, item in enumerate(_MENU_ITEMS):
             if i == self._selected:
-                lines.append((f"{selector} {item}", _AMBER))
+                lines.append((f"{selector} {item}", theme.accent))
             else:
-                lines.append((f"  {item}", _DIM))
+                lines.append((f"  {item}", theme.dim))
 
-        lines.append(("", _DIM))
-        lines.append(("↑↓ / j k: move   Enter: select   Esc: quit", _DIM))
+        lines.append(("", theme.dim))
+        lines.append(
+            ("↑↓ / j k: move   Enter: select   Esc: quit   t: theme", theme.dim)
+        )
+        lines.append((f"Theme: {theme.name}", theme.dim))  # TEMPORARY
 
         surf = pygame.Surface(size)
-        surf.fill(_BACKGROUND)
+        surf.fill(theme.background)
 
         total_h = char_h * len(lines)
         y_start = (size[1] - total_h) // 2
@@ -121,7 +122,8 @@ class TitleScene(Scene):
             surf.blit(rendered, (x, y_start + i * char_h))
 
         surf.blit(
-            render_border(self._map_cols, self._map_rows, self._tile, _AMBER), (0, 0)
+            render_border(self._map_cols, self._map_rows, self._tile, theme.border),
+            (0, 0),
         )
 
         return surf
