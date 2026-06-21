@@ -1,7 +1,7 @@
 """Title screen scene.
 
 Keyboard-navigable menu: arrow keys / j k select, Enter confirms, Esc quits.
-Press t to cycle UI themes (temporary — remove once a palette is chosen).
+Press t to cycle UI themes.
 """
 
 from __future__ import annotations
@@ -12,7 +12,7 @@ from typing import final
 import pygame
 
 from clio import codepage
-from clio.palette import Theme
+from clio.palette import Theme, ThemeManager
 from clio.render import render_border
 from clio.scene import Scene, ShowWorldMap
 from clio.world import MapGenerator
@@ -34,14 +34,14 @@ _MENU_ITEMS = ("Generate Simplex Map", "Generate Random Map", "Quit")
 class TitleScene(Scene):
     def __init__(
         self,
-        theme: Theme,
+        themes: ThemeManager,
         ui_font: pygame.font.Font,
         tile_font: pygame.font.Font,
         tile: int,
         map_cols: int,
         map_rows: int,
     ) -> None:
-        super().__init__(theme)
+        super().__init__(themes)
         self._ui_font = ui_font
         self._tile_font = tile_font
         self._tile = tile
@@ -49,6 +49,7 @@ class TitleScene(Scene):
         self._map_rows = map_rows
         self._selected = 0
         self._surface: pygame.Surface | None = None
+        self._rendered_theme: Theme | None = None
 
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
@@ -62,7 +63,7 @@ class TitleScene(Scene):
             case pygame.K_DOWN | pygame.K_j:
                 self._selected = (self._selected + 1) % len(_MENU_ITEMS)
                 self._surface = None
-            case pygame.K_t:  # TEMPORARY — theme toggle
+            case pygame.K_t:
                 self.cycle_theme()
                 self._surface = None
             case pygame.K_RETURN | pygame.K_KP_ENTER:
@@ -78,7 +79,11 @@ class TitleScene(Scene):
                 self.terminate()
 
     def draw(self, screen: pygame.Surface) -> None:
-        if self._surface is None or self._surface.get_size() != screen.get_size():
+        if (
+            self._surface is None
+            or self._surface.get_size() != screen.get_size()
+            or self.theme is not self._rendered_theme
+        ):
             self._surface = self._render(screen.get_size())
         screen.blit(self._surface, (0, 0))
 
@@ -103,7 +108,7 @@ class TitleScene(Scene):
         lines.append(
             ("↑↓ / j k: move   Enter: select   Esc: quit   t: theme", theme.dim)
         )
-        lines.append((f"Theme: {theme.name}", theme.dim))  # TEMPORARY
+        lines.append((f"Theme: {theme.name}", theme.dim))
 
         surf = pygame.Surface(size)
         surf.fill(theme.background)
@@ -121,4 +126,5 @@ class TitleScene(Scene):
             (0, 0),
         )
 
+        self._rendered_theme = theme
         return surf

@@ -40,8 +40,9 @@ def run() -> None:
     tile_font = _make_font(tile)
 
     clock = pygame.time.Clock()
+    themes = palette.ThemeManager()
     stack: list[Scene] = [
-        TitleScene(palette.THEMES[0], ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS)
+        TitleScene(themes, ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS)
     ]
 
     running = True
@@ -68,9 +69,7 @@ def run() -> None:
                 stack.pop()
             case ShowWorldMap(generator=gen):
                 stack.append(
-                    WorldMapScene(
-                        current.theme, gen, tile_font, tile, _MAP_COLS, _MAP_ROWS
-                    )
+                    WorldMapScene(themes, gen, tile_font, tile, _MAP_COLS, _MAP_ROWS)
                 )
 
         if not stack:

@@ -7,10 +7,10 @@ Usage::
 
     from clio import palette
 
-    theme = palette.THEMES[0]           # or any Theme value
-    theme = palette.next_theme(theme)   # advance to the next; TEMPORARY
-    surf.fill(theme.background)
-    font.render(text, True, theme.text)
+    themes = palette.ThemeManager()     # owns the active theme + toggle
+    surf.fill(themes.current.background)
+    font.render(text, True, themes.current.text)
+    themes.cycle()                      # advance to the next theme
 """
 
 from dataclasses import dataclass
@@ -46,14 +46,12 @@ TUNDRA_BG: Color = (55, 60, 65)         # cold ground
 
 
 # ---------------------------------------------------------------------------
-# UI chrome themes  (TEMPORARY — remove loser after side-by-side comparison)
+# UI chrome themes
 #
 # Each Theme bundles the five UI chrome colors. Terrain colors above are
 # shared by all themes and not included here.
 #
-# Toggle on the title screen with the `t` key (calls Scene.cycle_theme()).
-# Once a theme is chosen, delete the unused Theme, THEMES, next_theme(),
-# Scene.cycle_theme(), and the K_t handler in title.py.
+# Toggle in any scene with the `t` key (calls Scene.cycle_theme()).
 # ---------------------------------------------------------------------------
 
 
@@ -102,10 +100,30 @@ BROGUE_SLATE: Theme = Theme(
     accent=(190, 205, 220),
 )
 
-# Ordered tuple of all themes — drives next_theme().  # TEMPORARY
+# Ordered tuple of all available themes.
 THEMES: tuple[Theme, ...] = (BONE_STONE, PARCHMENT, BROGUE_SLATE)
 
 
-def next_theme(current: Theme) -> Theme:  # TEMPORARY (see block comment above)
-    """Return the next theme after `current` in THEMES, wrapping around."""
-    return THEMES[(THEMES.index(current) + 1) % len(THEMES)]
+class ThemeManager:
+    """Owns the active theme and the cycle toggle.
+
+    Scenes hold a reference to one shared instance, so a change made in any
+    scene is immediately visible in all others.
+    """
+
+    def __init__(
+        self,
+        themes: tuple[Theme, ...] = THEMES,
+        start: int = 0,
+    ) -> None:
+        self._themes = themes
+        self._index = start
+
+    @property
+    def current(self) -> Theme:
+        """The currently active theme."""
+        return self._themes[self._index]
+
+    def cycle(self) -> None:
+        """Advance to the next theme, wrapping around."""
+        self._index = (self._index + 1) % len(self._themes)

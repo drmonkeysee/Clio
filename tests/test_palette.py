@@ -1,13 +1,26 @@
 from clio import palette
 
 
-def test_next_theme_advances_in_order() -> None:
+def test_theme_manager_starts_on_first_theme() -> None:
+    tm = palette.ThemeManager()
+    assert tm.current is palette.THEMES[0]
+
+
+def test_theme_manager_cycle_advances_in_order() -> None:
+    tm = palette.ThemeManager()
     themes = list(palette.THEMES)
-    for i, current in enumerate(themes):
-        expected = themes[(i + 1) % len(themes)]
-        assert palette.next_theme(current) is expected
+    for expected in themes[1:]:
+        tm.cycle()
+        assert tm.current is expected
 
 
-def test_next_theme_wraps_around() -> None:
-    last = palette.THEMES[-1]
-    assert palette.next_theme(last) is palette.THEMES[0]
+def test_theme_manager_cycle_wraps_around() -> None:
+    tm = palette.ThemeManager()
+    for _ in palette.THEMES:
+        tm.cycle()
+    assert tm.current is palette.THEMES[0]
+
+
+def test_theme_manager_custom_start_index() -> None:
+    tm = palette.ThemeManager(start=1)
+    assert tm.current is palette.THEMES[1]

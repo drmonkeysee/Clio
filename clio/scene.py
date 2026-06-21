@@ -16,8 +16,9 @@ At the end of each tick the active scene's transition is consumed:
   - Pop              → discard the current scene; the one beneath becomes
                         active; if the stack is empty the app exits
 
-Each scene carries the active UI theme. The app passes the current theme into
-newly constructed scenes so the chosen theme follows the session.
+Each scene holds a reference to the shared ThemeManager. A theme change in any
+scene is immediately reflected in all others because they all read from the same
+source of truth.
 """
 
 from __future__ import annotations
@@ -59,13 +60,18 @@ type Transition = SceneRequest | Pop | None
 
 
 class Scene:
-    def __init__(self, theme: palette.Theme) -> None:
-        self.theme = theme
+    def __init__(self, themes: palette.ThemeManager) -> None:
+        self._themes = themes
         self._transition: Transition = None
 
-    def cycle_theme(self) -> None:  # TEMPORARY (see palette.py)
-        """Advance this scene's theme to the next in palette.THEMES."""
-        self.theme = palette.next_theme(self.theme)
+    @property
+    def theme(self) -> palette.Theme:
+        """The currently active theme, read from the shared ThemeManager."""
+        return self._themes.current
+
+    def cycle_theme(self) -> None:
+        """Advance to the next theme; all scenes sharing this manager update."""
+        self._themes.cycle()
 
     # ------------------------------------------------------------------
     # Transition API
