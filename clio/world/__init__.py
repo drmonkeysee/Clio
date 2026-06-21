@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from enum import Enum
+from enum import Enum, auto
 
 from clio.world.grid import WorldMap
 from clio.world.random import generate_random as generate_random
@@ -13,8 +13,8 @@ class MapGenerator(Enum):
     Callable: ``generator(rows, cols)`` returns a ``WorldMap``.
     """
 
-    SIMPLEX = "simplex"
-    RANDOM = "random"
+    SIMPLEX = auto()
+    RANDOM = auto()
 
     def __call__(self, rows: int, cols: int, seed: int | None = None) -> WorldMap:
         match self:
