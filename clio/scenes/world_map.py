@@ -1,4 +1,4 @@
-"""World map scene — displays a generated WorldMap as a full-screen tile grid."""
+"""World map scene — generates and displays a WorldMap as a full-screen tile grid."""
 
 from __future__ import annotations
 
@@ -9,7 +9,7 @@ import pygame
 from clio.palette import Theme
 from clio.render import GlyphAtlas, render_border, render_world_map
 from clio.scene import Scene
-from clio.world.grid import WorldMap
+from clio.world import MapGenerator
 
 
 @final
@@ -17,13 +17,14 @@ class WorldMapScene(Scene):
     def __init__(
         self,
         theme: Theme,
-        world: WorldMap,
+        generator: MapGenerator,
         tile_font: pygame.font.Font,
         tile: int,
-        title: Scene | None = None,
+        map_cols: int,
+        map_rows: int,
     ) -> None:
         super().__init__(theme)
-        self._title = title
+        world = generator(map_rows, map_cols)
         atlas = GlyphAtlas(tile_font, tile)
         self._map_surf = render_world_map(world, atlas)
         self._border = render_border(world.cols, world.rows, tile, self.theme.border)
@@ -33,10 +34,7 @@ class WorldMapScene(Scene):
             return
         match event.key:
             case pygame.K_ESCAPE:
-                if self._title is not None:
-                    self.next_scene = self._title
-                else:
-                    self.quit = True
+                self.terminate()
 
     def draw(self, screen: pygame.Surface) -> None:
         w, h = screen.get_size()

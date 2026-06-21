@@ -11,12 +11,11 @@ from typing import final
 
 import pygame
 
-import clio.world as world
 from clio import codepage
 from clio.palette import Theme
 from clio.render import render_border
-from clio.scene import Scene
-from clio.scenes.world_map import WorldMapScene
+from clio.scene import Scene, ShowWorldMap
+from clio.world import MapGenerator
 
 _TITLE = "C L I O"
 _SUBTITLE = "Trade Network Emergence Simulator"
@@ -56,7 +55,7 @@ class TitleScene(Scene):
             return
         match event.key:
             case pygame.K_ESCAPE:
-                self.quit = True
+                self.terminate()
             case pygame.K_UP | pygame.K_k:
                 self._selected = (self._selected - 1) % len(_MENU_ITEMS)
                 self._surface = None  # invalidate cached render
@@ -70,19 +69,13 @@ class TitleScene(Scene):
                 self._activate()
 
     def _activate(self) -> None:
-        wgen = None
         match _MenuItem(self._selected):
             case _MenuItem.GENERATE_SIMPLEX:
-                wgen = world.generate_simplex
+                self.transition_to(ShowWorldMap(MapGenerator.SIMPLEX))
             case _MenuItem.GENERATE_RANDOM:
-                wgen = world.generate_random
+                self.transition_to(ShowWorldMap(MapGenerator.RANDOM))
             case _MenuItem.QUIT:
-                self.quit = True
-        if wgen:
-            wmap = wgen(self._map_rows, self._map_cols)
-            self.next_scene = WorldMapScene(
-                self.theme, wmap, self._tile_font, self._tile, title=self
-            )
+                self.terminate()
 
     def draw(self, screen: pygame.Surface) -> None:
         if self._surface is None or self._surface.get_size() != screen.get_size():

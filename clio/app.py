@@ -1,8 +1,10 @@
 import pygame
 
-from clio import palette, scene as scene_mod
+from clio import palette
 from clio.render import TILE_LOGICAL
+from clio.scene import Pop, Scene, ShowWorldMap
 from clio.scenes.title import TitleScene
+from clio.scenes.world_map import WorldMapScene
 
 _TITLE: str = "Clio"
 _UI_FONT_SIZE: int = 24
@@ -38,13 +40,14 @@ def run() -> None:
     tile_font = _make_font(tile)
 
     clock = pygame.time.Clock()
-    current: scene_mod.Scene = TitleScene(
-        palette.THEMES[0], ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS
-    )
+    stack: list[Scene] = [
+        TitleScene(palette.THEMES[0], ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS)
+    ]
 
     running = True
     while running:
         dt = clock.tick(_FPS)
+        current = stack[-1]
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -59,11 +62,19 @@ def run() -> None:
         current.draw(screen)
         win.flip()
 
-        # Check for scene transition after drawing this frame.
-        if current.quit:
+        # Consume the scene's transition signal and update the stack.
+        match current.take_transition():
+            case Pop():
+                stack.pop()
+            case ShowWorldMap(generator=gen):
+                stack.append(
+                    WorldMapScene(
+                        current.theme, gen, tile_font, tile, _MAP_COLS, _MAP_ROWS
+                    )
+                )
+
+        if not stack:
             running = False
-        elif nxt := current.get_transition():
-            current = nxt
 
     win.destroy()
     pygame.quit()
