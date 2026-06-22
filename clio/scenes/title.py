@@ -36,15 +36,11 @@ class TitleScene(Scene):
         ui_font: pygame.font.Font,
         tile_font: pygame.font.Font,
         tile: int,
-        map_cols: int,
-        map_rows: int,
     ) -> None:
         super().__init__(themes)
         self._ui_font = ui_font
         self._tile_font = tile_font
         self._tile = tile
-        self._map_cols = map_cols
-        self._map_rows = map_rows
         self._selected = 0
         self._surface: pygame.Surface | None = None
         self._rendered_theme: Theme | None = None
@@ -123,10 +119,7 @@ class TitleScene(Scene):
             x = (size[0] - rendered.get_width()) // 2
             surf.blit(rendered, (x, y_start + i * char_h))
 
-        surf.blit(
-            render_border(self._map_cols, self._map_rows, self._tile, theme.border),
-            (0, 0),
-        )
+        surf.blit(render_border(size, self._tile, theme.border), (0, 0))
 
         self._rendered_theme = theme
         return surf

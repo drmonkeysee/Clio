@@ -41,7 +41,7 @@ def run() -> None:
 
     clock = pygame.time.Clock()
     themes = palette.ThemeManager()
-    stack = [TitleScene(themes, ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS)]
+    stack = [TitleScene(themes, ui_font, tile_font, tile)]
 
     running = True
     while running:

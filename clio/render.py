@@ -58,22 +58,18 @@ def render_world_map(world: WorldMap, atlas: GlyphAtlas) -> pygame.Surface:
 
 
 def render_border(
-    cols: int,
-    rows: int,
+    size: tuple[int, int],
     tile: int,
     color: tuple[int, int, int],
 ) -> pygame.Surface:
-    """Build a window-sized SRCALPHA frame around a cols×rows interior.
+    """Build a `tile`-thick frame around the edge of a `size` surface.
 
-    The surface is `(cols + 2) * tile` wide and `(rows + 2) * tile` tall.
-    The 1-tile ring is filled with a solid color; the interior is punched
-    out transparent so callers can blit this on top of any background.
-
-    Called once per scene construction; the result is blitted each frame.
+    The returned surface matches `size`; the ring is filled with `color` and
+    the interior is punched out transparent so callers can blit it over any
+    background.
     """
-    w = (cols + 2) * tile
-    h = (rows + 2) * tile
+    w, h = size
     surf = pygame.Surface((w, h), pygame.SRCALPHA)
     surf.fill(color)
-    surf.fill((0, 0, 0, 0), (tile, tile, cols * tile, rows * tile))
+    surf.fill((0, 0, 0, 0), (tile, tile, w - 2 * tile, h - 2 * tile))
     return surf

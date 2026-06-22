@@ -28,9 +28,8 @@ class WorldMapScene(Scene):
         atlas = GlyphAtlas(tile_font, tile)
         self._map_surf = render_world_map(world, atlas)
         self._tile = tile
-        self._map_cols = world.cols
-        self._map_rows = world.rows
-        self._border = render_border(world.cols, world.rows, tile, self.theme.border)
+        self._border: pygame.Surface | None = None
+        self._border_size: tuple[int, int] | None = None
         self._border_theme = self.theme
 
     @override
@@ -47,12 +46,16 @@ class WorldMapScene(Scene):
 
     @override
     def draw(self, screen: pygame.Surface) -> None:
-        if self.theme is not self._border_theme:
-            self._border = render_border(
-                self._map_cols, self._map_rows, self._tile, self.theme.border
-            )
+        size = screen.get_size()
+        if (
+            self._border is None
+            or size != self._border_size
+            or self.theme is not self._border_theme
+        ):
+            self._border = render_border(size, self._tile, self.theme.border)
+            self._border_size = size
             self._border_theme = self.theme
-        w, h = screen.get_size()
+        w, h = size
         mw, mh = self._map_surf.get_size()
         screen.fill(self.theme.background)
         screen.blit(self._map_surf, ((w - mw) // 2, (h - mh) // 2))
