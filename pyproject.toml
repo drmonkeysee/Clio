@@ -23,6 +23,12 @@ dev = [
     "pytest>=9.1.1",
 ]
 
+[tool.ruff]
+exclude = ["typings/"]
+
+[tool.ty.src]
+exclude = ["typings/"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
