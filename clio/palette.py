@@ -14,6 +14,7 @@ Usage::
 """
 
 from dataclasses import dataclass
+from typing import final
 
 type Color = tuple[int, int, int]
 
@@ -104,6 +105,7 @@ BROGUE_SLATE: Theme = Theme(
 THEMES: tuple[Theme, ...] = (BONE_STONE, PARCHMENT, BROGUE_SLATE)
 
 
+@final
 class ThemeManager:
     """Owns the active theme and the cycle toggle.
 

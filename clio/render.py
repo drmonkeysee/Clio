@@ -1,3 +1,5 @@
+from typing import final
+
 import pygame
 
 from clio.world.grid import WorldMap
@@ -8,6 +10,7 @@ from clio.world.terrain import TerrainType, visual
 TILE_LOGICAL: int = 14
 
 
+@final
 class GlyphAtlas:
     """Pre-rendered tile surfaces keyed by TerrainType value.
 

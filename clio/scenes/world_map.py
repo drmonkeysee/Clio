@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import final
+from typing import final, override
 
 import pygame
 
@@ -31,8 +31,9 @@ class WorldMapScene(Scene):
         self._map_cols = world.cols
         self._map_rows = world.rows
         self._border = render_border(world.cols, world.rows, tile, self.theme.border)
-        self._border_theme: Theme = self.theme
+        self._border_theme = self.theme
 
+    @override
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
@@ -41,7 +42,10 @@ class WorldMapScene(Scene):
                 self.terminate()
             case pygame.K_t:
                 self.cycle_theme()
+            case _:
+                pass
 
+    @override
     def draw(self, screen: pygame.Surface) -> None:
         if self.theme is not self._border_theme:
             self._border = render_border(

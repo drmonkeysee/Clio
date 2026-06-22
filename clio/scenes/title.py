@@ -7,7 +7,7 @@ Press t to cycle UI themes.
 from __future__ import annotations
 
 from enum import IntEnum
-from typing import final
+from typing import final, override
 
 import pygame
 
@@ -19,15 +19,13 @@ from clio.world import MapGenerator
 
 _TITLE = "C L I O"
 _SUBTITLE = "Trade Network Emergence Simulator"
+_MENU_ITEMS = ("Generate Simplex Map", "Generate Random Map", "Quit")
 
 
 class _MenuItem(IntEnum):
     GENERATE_SIMPLEX = 0
     GENERATE_RANDOM = 1
     QUIT = 2
-
-
-_MENU_ITEMS = ("Generate Simplex Map", "Generate Random Map", "Quit")
 
 
 @final
@@ -51,6 +49,7 @@ class TitleScene(Scene):
         self._surface: pygame.Surface | None = None
         self._rendered_theme: Theme | None = None
 
+    @override
     def handle_event(self, event: pygame.event.Event) -> None:
         if event.type != pygame.KEYDOWN:
             return
@@ -68,6 +67,8 @@ class TitleScene(Scene):
                 self._surface = None
             case pygame.K_RETURN | pygame.K_KP_ENTER:
                 self._activate()
+            case _:
+                pass
 
     def _activate(self) -> None:
         match _MenuItem(self._selected):
@@ -78,6 +79,7 @@ class TitleScene(Scene):
             case _MenuItem.QUIT:
                 self.terminate()
 
+    @override
     def draw(self, screen: pygame.Surface) -> None:
         if (
             self._surface is None
@@ -93,7 +95,7 @@ class TitleScene(Scene):
         _, char_h = font.size("M")
         selector = codepage.TRIANGLE_RIGHT
 
-        lines: list[tuple[str, tuple[int, int, int]]] = [
+        lines = [
             (_TITLE, theme.text),
             (_SUBTITLE, theme.dim),
             ("", theme.dim),

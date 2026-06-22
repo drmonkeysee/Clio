@@ -29,3 +29,6 @@ pythonpath = ["."]
 
 [tool.basedpyright]
 typeCheckingMode = "recommended"
+reportAny = "information"
+reportUnusedCallResult = "information"
+reportUnusedParameter = "information"

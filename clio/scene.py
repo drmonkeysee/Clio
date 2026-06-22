@@ -61,7 +61,7 @@ type Transition = SceneRequest | Pop | None
 
 class Scene:
     def __init__(self, themes: palette.ThemeManager) -> None:
-        self._themes = themes
+        self._themes: palette.ThemeManager = themes
         self._transition: Transition = None
 
     @property

@@ -25,7 +25,7 @@ pygame-ce documentation can be found here @https://pyga.me/docs/
 ## Code Style
 
 - use modern Python constructs like type-hints, match statements, and the walrus operator `:=`, we're using 3.14+
-- all module-public symbols should have type-hints, module- and class-private symbols do not need type-hints
+- everything should have type-hints if possible except local variables and instance member assignments where the type is obviously inferred from the assigning value
 
 ## Environment
 

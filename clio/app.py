@@ -41,9 +41,7 @@ def run() -> None:
 
     clock = pygame.time.Clock()
     themes = palette.ThemeManager()
-    stack: list[Scene] = [
-        TitleScene(themes, ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS)
-    ]
+    stack = [TitleScene(themes, ui_font, tile_font, tile, _MAP_COLS, _MAP_ROWS)]
 
     running = True
     while running:
@@ -71,6 +69,8 @@ def run() -> None:
                 stack.append(
                     WorldMapScene(themes, gen, tile_font, tile, _MAP_COLS, _MAP_ROWS)
                 )
+            case _:
+                pass
 
         if not stack:
             running = False
