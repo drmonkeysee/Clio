@@ -6,7 +6,7 @@ from typing import final, override
 
 import pygame
 
-from clio.palette import Theme, ThemeManager
+from clio.palette import ThemeManager
 from clio.render import GlyphAtlas, render_border, render_world_map
 from clio.scene import Scene
 from clio.world import MapGenerator
